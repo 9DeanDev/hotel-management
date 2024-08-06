@@ -1,0 +1,47 @@
+.footer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background-color: #111111;
+    min-height: 470px;
+    font: normal normal normal 24px Open Sans;
+    color: #ffffff;
+    padding: 0 60px;
+
+    .grid {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .listItem {
+            list-style: none;
+            padding: 0;
+
+            li {
+                margin-bottom: 16px;
+
+                a {
+                    text-decoration: none;
+                    color: #ffffff;
+
+                    &:hover {
+                        color: #c1af88;
+                    }
+                }
+
+            }
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+}
+
+@media (max-width: 700px) {
+    .footer {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
