@@ -2,17 +2,27 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    font: normal normal normal 14px Open Sans;
+     font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Ubuntu', sans-serif;
 
     .heading {
         display: flex;
-        flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
         gap: 8px;
         background-color: #111111;
         width: 100%;
-        min-height: 119px;
-        font: normal normal normal 20px Open Sans !important;
+        min-height: 103px;
+        font-style: normal;
+        font-variant: normal;
+        font-weight: normal;
+        font-size: 20px;
+        font-family: 'Ubuntu', sans-serif;
+        padding: 8px 0px;
+        margin-top: 30px;
     }
 }

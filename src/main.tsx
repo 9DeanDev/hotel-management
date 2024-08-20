@@ -7,11 +7,11 @@ initializeIcons();
 
 const customTheme: PartialTheme = {
   palette: {
-    themePrimary: '#c1af88',
-    // themeDark: '#c1af88',
-    // themeLight: '#c1af88',
-    // themeLighter: '#c1af88',
-    // themeSecondary: '#c1af88',
+    themePrimary: 'rgb(219 194 140)',
+    // themeDark: 'rgb(219 194 140)',
+    // themeLight: 'rgb(219 194 140)',
+    // themeLighter: 'rgb(219 194 140)',
+    // themeSecondary: 'rgb(219 194 140)',
   }
 }
 

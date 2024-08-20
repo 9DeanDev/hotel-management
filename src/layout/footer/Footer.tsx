@@ -42,7 +42,7 @@ export const Footer = () => {
             <div className={styles.grid}>
                 <img src={logo} alt='Logo' style={{ width: '150px', height: '150px' }} />
                 <div className={styles.info}>
-                    <b>Bon Hotels Head Office</b>
+                    <b>Daemon Hotels Head Office</b>
                     <p>+27 434 344 432</p>
                     <p>info@daemonhotels.com</p>
                 </div>
