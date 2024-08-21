@@ -2,11 +2,17 @@ import LayoutComponent from "../../../layout/LayoutComponent";
 import { AuthBtn, Button } from "../../../components";
 import styles from "./Home.module.scss";
 import { FontIcon, IButtonStyles, mergeStyles } from "@fluentui/react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 
 export const Home = () => {
   const navigate = useNavigate()
+
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   const [user, setUser] = useState<string | null>(null);
 
   const iconList = [
@@ -101,7 +107,7 @@ export const Home = () => {
             >
               <div className={styles.overlay}></div>
               <p style={{ textAlign: "center" }}>{item.text}</p>
-              <Button styles={btnStyles} text="Check for details" onClick={() => navigate(`/Room-Details/${item.text}`)} />
+              <Button styles={btnStyles} text="Check for details" onClick={() => navigate(`/Rooms/${item.text}`)} />
             </div>
           );
         })}

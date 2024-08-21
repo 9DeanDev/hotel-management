@@ -35,27 +35,33 @@ export const RoomDetails = () => {
     ]
 
     const onSubmit = () => {
-
     }
+
+    const renderSlide = () => {
+        return (
+            <Swiper
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={50}
+                slidesPerView={1}
+                navigation          // Bật tính năng điều hướng
+                pagination={{ clickable: true }} // Hiển thị các dấu chấm phân trang
+                autoplay={{ delay: 5000 }} // Tự động chuyển slide sau 3 giây>
+            >
+                {imgUrl.map((item, index) => {
+                    return (
+                        <SwiperSlide key={index}>
+                            <img src={item.url} alt="img" style={{ width: '100%', height: '400px', borderRadius: '8px' }} />
+                        </SwiperSlide>
+                    )
+                })}
+            </Swiper>
+        )
+    }
+
     return (
         <LayoutComponent>
             <div className={styles.slider}>
-                <Swiper
-                    modules={[Navigation, Pagination, Autoplay]}
-                    spaceBetween={50}
-                    slidesPerView={1}
-                    navigation          // Bật tính năng điều hướng
-                    pagination={{ clickable: true }} // Hiển thị các dấu chấm phân trang
-                    autoplay={{ delay: 5000 }} // Tự động chuyển slide sau 3 giây>
-                >
-                    {imgUrl.map((item, index) => {
-                        return (
-                            <SwiperSlide key={index}>
-                                <img src={item.url} alt="img" style={{ width: '100%', height: '400px', borderRadius: '8px' }} />
-                            </SwiperSlide>
-                        )
-                    })}
-                </Swiper>
+                {renderSlide()}
             </div>
             <div className={styles.bodyContent}>
                 <div className={styles.detail}>
@@ -63,7 +69,7 @@ export const RoomDetails = () => {
                         <h2>
                             Deluxe Room
                         </h2>
-                        <p><span >199$</span>/per night</p>
+                        <p><span>199$</span>/per night</p>
                     </div>
                     <p>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae similique pariatur ducimus
