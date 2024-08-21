@@ -19,13 +19,6 @@ export const CustomDatePicker = (props: IFormItemProps & IDatePickerProps) => {
                         props.setValue?.(props.name, date, { shouldDirty: true, shouldValidate: true });
                         props.onSelectDate?.(date);
                     }}
-                    styles={{
-                        textField: {
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }
-                    }}
                 />
             )}
         />

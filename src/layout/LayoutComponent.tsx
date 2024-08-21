@@ -11,13 +11,11 @@ const LayoutComponent = ({ children }: IProps) => {
 
     return (
         <>
-            <div className={styles.root}>
-                <Header />
-                <div className={styles.rootbody}>
-                    {children}
-                </div>
-                <Footer />
+            <Header />
+            <div className={styles.rootbody}>
+                {children}
             </div>
+            <Footer />
         </>
     )
 }

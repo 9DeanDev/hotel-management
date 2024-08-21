@@ -8,10 +8,10 @@ initializeIcons();
 const customTheme: PartialTheme = {
   palette: {
     themePrimary: 'rgb(219 194 140)',
-    // themeDark: 'rgb(219 194 140)',
-    // themeLight: 'rgb(219 194 140)',
-    // themeLighter: 'rgb(219 194 140)',
-    // themeSecondary: 'rgb(219 194 140)',
+    themeDark: 'rgb(219 194 140)',
+    themeLight: 'rgb(219 194 140)',
+    themeLighter: 'rgb(219 194 140)',
+    themeSecondary: 'rgb(219 194 140)',
   }
 }
 

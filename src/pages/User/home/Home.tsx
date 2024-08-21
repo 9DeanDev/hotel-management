@@ -2,15 +2,13 @@ import LayoutComponent from "../../../layout/LayoutComponent";
 import { AuthBtn, Button } from "../../../components";
 import styles from "./Home.module.scss";
 import { FontIcon, IButtonStyles, mergeStyles } from "@fluentui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export const Home = () => {
-  const [user, setUser] = useState<String | null>(null);
+  const navigate = useNavigate()
+  const [user, setUser] = useState<string | null>(null);
 
-  useEffect(() => {
-    setUser(localStorage.getItem("username"));
-  }, [localStorage.getItem("username")]);
-  
   const iconList = [
     {
       iconName: "TimeSheet",
@@ -103,7 +101,7 @@ export const Home = () => {
             >
               <div className={styles.overlay}></div>
               <p style={{ textAlign: "center" }}>{item.text}</p>
-              <Button styles={btnStyles} text="Check for details" />
+              <Button styles={btnStyles} text="Check for details" onClick={() => navigate(`/Room-Details/${item.text}`)} />
             </div>
           );
         })}

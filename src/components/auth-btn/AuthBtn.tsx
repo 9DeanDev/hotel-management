@@ -12,10 +12,10 @@ export const AuthBtn = (props: IAuthButtonProps) => {
   const [openLogin, isOpenLogin] = useState(false);
   const [openRegister, isOpenRegister] = useState(false);
   const { control, handleSubmit } = useForm();
-  const [email, setEmail] = useState<String>("");
-  const [username, setUsername] = useState<String>("");
-  const [password, setPassword] = useState<String>("");
-  const [phone, setPhone] = useState<String>("");
+  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const onSubmit = async () => {
     setLoading(true);
@@ -58,7 +58,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
             password,
           })
 
-          if(token){
+          if (token) {
             localStorage.setItem("token", res.data.result.token);
           }
 

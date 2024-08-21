@@ -3,10 +3,10 @@ import { Control, Controller, UseControllerProps, UseFormSetValue } from "react-
 
 export interface IFormItemProps {
     control?: Control;
-    setValue?: UseFormSetValue<A>;
+    setValue?: UseFormSetValue<T>;
     name: string;
     rules?: UseControllerProps['rules'];
-    defaultValue?: A;
+    defaultValue?: T;
 }
 
 export const Input = (props: IFormItemProps & ITextFieldProps) => {
