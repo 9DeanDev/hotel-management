@@ -6,33 +6,32 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useLocation } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, CustomDatePicker } from "../../../components";
 import { SpinButton } from "@fluentui/react";
 
 
 export const RoomDetails = () => {
-    const { control, handleSubmit } = useForm();
     const { pathname } = useLocation();
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [pathname]);
 
-    const imgUrl = [
-        {
-            url: "./../../src/assets/deluxroom/deluxe-room-king-1-2000px.jpg",
-        },
-        {
-            url: "./../../src/assets/deluxroom/deluxe-room-king-bathroom-2000px_wide.jpg",
-        },
-        {
-            url: "./../../src/assets/deluxroom/deluxe-room-twin-2-2000px_wide.jpg",
-        },
-        {
-            url: "./../../src/assets/deluxroom/maxresdefault.jpg",
-        },
-    ]
+    const { control, handleSubmit } = useForm();
+    const [imgUrl, setImgUrl] = useState<string[]>([]);
+
+
+    useEffect(() => {
+        const res = {
+            roomname: 'Deluxe',
+            urlimg1: './../../src/assets/deluxroom/deluxe-room-king-1-2000px.jpg',
+            urlimg2: './../../src/assets/deluxroom/deluxe-room-king-bathroom-2000px_wide.jpg',
+            urlimg3: './../../src/assets/deluxroom/deluxe-room-twin-2-2000px_wide.jpg',
+            urlimg4: './../../src/assets/deluxroom/maxresdefault.jpg',
+        }
+        setImgUrl([res.urlimg1, res.urlimg2, res.urlimg3, res.urlimg4])
+    }, [])
 
     const onSubmit = () => {
     }
@@ -50,7 +49,7 @@ export const RoomDetails = () => {
                 {imgUrl.map((item, index) => {
                     return (
                         <SwiperSlide key={index}>
-                            <img src={item.url} alt="img" style={{ width: '100%', height: '400px', borderRadius: '8px' }} />
+                            <img src={item} alt="img" style={{ width: '100%', height: '400px', borderRadius: '8px' }} />
                         </SwiperSlide>
                     )
                 })}
@@ -109,7 +108,8 @@ export const RoomDetails = () => {
                             step={1}
                             styles={{
                                 root: {
-                                    display: 'flex'
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }
                             }}
                         />
