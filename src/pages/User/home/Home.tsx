@@ -6,14 +6,20 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 export const Home = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<string | null>(
+    localStorage.getItem("username")
+  );
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token")
+  );
+  const [openLogin, setOpenLogin] = useState(false);
 
   const iconList = [
     {
@@ -65,20 +71,33 @@ export const Home = () => {
     {
       url: "./../../src/assets/anh-ks-thumb.jpeg",
       text: "Standard Twin Room",
+      path: "StandardTwin",
     },
     {
       url: "./../../src/assets/StandardRoom.jpg",
       text: "Standard Room",
+      path: "Standard",
     },
     {
       url: "./../../src/assets/StandardViewRoom.webp",
-      text: "Standard View Room",
+      text: "Superior Room",
+      path: "Superior",
     },
     {
       url: "./../../src/assets/ciputra-deluxe-room.jpeg",
       text: "Deluxe Room",
+      path: "Deluxe",
     },
   ];
+
+  const handleClickForDetailsRoom = (item: any) => {
+    if (token) {
+      navigate(`/roomImage/${item.path}`);
+    } else {
+      window.confirm("You need to log in first");
+      setOpenLogin(true);
+    }
+  };
 
   const renderGridItem = () => {
     const btnStyles: IButtonStyles = {
@@ -88,12 +107,13 @@ export const Home = () => {
         borderRadius: 10,
         fontSize: 24,
         fontWeight: 500,
-        fontFamily: 'Ubuntu sans-serif'
+        fontFamily: "Ubuntu sans-serif",
       },
       rootHovered: {
         backgroundColor: "#DFAA5B",
       },
     };
+
     return (
       <>
         {gridItemList.map((item, index) => {
@@ -107,7 +127,11 @@ export const Home = () => {
             >
               <div className={styles.overlay}></div>
               <p style={{ textAlign: "center" }}>{item.text}</p>
-              <Button styles={btnStyles} text="Check for details" onClick={() => navigate(`/Rooms/${item.text}`)} />
+              <Button
+                styles={btnStyles}
+                text="Check for details"
+                onClick={() => handleClickForDetailsRoom(item)}
+              />
             </div>
           );
         })}
@@ -130,7 +154,7 @@ export const Home = () => {
           <p style={{ margin: "25px 0 41px 0", fontSize: 24, fontWeight: 400 }}>
             Good people. Good thinking. Good feeling.
           </p>
-          {!user && <AuthBtn text="EXPLORE" />}
+          {!token && <AuthBtn text="EXPLORE" isOpen={true} />}
         </div>
       </div>
       <div className={styles.body}>

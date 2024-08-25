@@ -9,7 +9,7 @@ import { useNavigate } from "react-router";
 
 export const AuthBtn = (props: IAuthButtonProps) => {
   const navigate = useNavigate();
-  const [openLogin, isOpenLogin] = useState(false);
+  const [openLogin, isOpenLogin] = useState(props.isOpen? props.isOpen: false);
   const [openRegister, isOpenRegister] = useState(false);
   const { control, handleSubmit } = useForm();
   const [email, setEmail] = useState<string>("");
@@ -17,6 +17,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
   const [password, setPassword] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
   const onSubmit = async () => {
     setLoading(true);
     if (openLogin) {
@@ -304,8 +305,6 @@ export const AuthBtn = (props: IAuthButtonProps) => {
 
   return (
     <>
-      {openRegister && ModalRegister()}
-      {openLogin && ModalLogin()}
       {!props.isRegister && (
         <Button styles={buttonStyles} onClick={() => isOpenLogin(true)}>
           {props.text}
@@ -320,6 +319,8 @@ export const AuthBtn = (props: IAuthButtonProps) => {
           {props.text}
         </ActionButton>
       )}
+      {openRegister && ModalRegister()}
+      {openLogin && ModalLogin()}
     </>
   );
 };

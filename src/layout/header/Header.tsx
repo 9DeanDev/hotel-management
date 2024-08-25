@@ -62,7 +62,7 @@ export const Header = () => {
     };
 
     const CustomBarButton: React.FunctionComponent<IButtonProps> = (props) => {
-        return <CommandBarButton {...props} styles={itemBarStyles} />;
+        return <CommandBarButton {...props} styles={itemBarStyles}/>;
     };
 
     const checkButtonStyles: IButtonStyles = {
