@@ -1,41 +1,42 @@
 .slider {
-    background-color: #f4f3ef;
-    padding: 50px;
-    max-height: 400px;
+  background-color: #f4f3ef;
+  padding: 50px;
+  max-height: 400px;
 }
 
 .bodyContent {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 50px 75px;
+
+  .detail {
+    flex-direction: column;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      span {
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.caContainer {
+  flex: 1;
+  border: solid 1px rgb(237, 237, 237);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 50px 75px;
+
+  .form {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    margin: 50px 75px;
-
-    .detail {
-        flex: 2;
-
-        .title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            span {
-                font-size: 1.5em;
-                font-weight: bold;
-            }
-        }
-    }
-
-    .bookForm {
-        flex: 1;
-        border: solid 1px rgb(237, 237, 237);
-        border-radius: 8px;
-        padding: 16px;
-
-        .form {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-    }
+  }
 }

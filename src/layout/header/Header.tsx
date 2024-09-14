@@ -6,7 +6,7 @@ import {
     ICommandBarItemProps,
     IDropdownOption,
     ISearchBoxStyles,
-    SearchBox,
+    // SearchBox,
     Stack,
 } from "@fluentui/react";
 import styles from "./Header.module.scss";
@@ -28,7 +28,6 @@ export const Header = () => {
     const [openCheckForm, isOpenCheckForm] = useState(false);
 
     const onSubmit = () => {
-        console.log("");
     };
 
     const rooms: IDropdownOption[] = [
@@ -38,22 +37,41 @@ export const Header = () => {
         { key: "Twin", text: "Twin" },
     ];
 
+    const handleRoomsClick = () => {
+       navigate('/Rooms')
+    };
+
+    const handleClickOurHotel = () => {
+        navigate('/')
+    };
+
+    const handleClickservices = () => {
+        navigate('/Service')
+    };
+
+    const handleClickContactUs = () => {
+        navigate('/ContactUs')
+    };
     const itemBar: ICommandBarItemProps[] = [
         {
             key: "Our hotel",
             text: "Our Hotel",
+            onClick: handleClickOurHotel
         },
         {
             key: "Rooms",
             text: "Rooms",
+            onClick: handleRoomsClick, 
         },
         {
-            key: "Facilities",
-            text: "Facilities",
+            key: "Service",
+            text: "Service",
+            onClick: handleClickservices,
         },
         {
             key: "Contact Us",
             text: "Contact Us",
+            onClick: handleClickContactUs
         },
     ];
 

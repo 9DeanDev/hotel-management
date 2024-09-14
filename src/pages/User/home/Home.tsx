@@ -13,12 +13,8 @@ export const Home = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  const [user, setUser] = useState<string | null>(
-    localStorage.getItem("username")
-  );
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
+  const user =  localStorage.getItem("username");
+  const token = localStorage.getItem("token")
   const [openLogin, setOpenLogin] = useState(false);
 
   const iconList = [
@@ -92,7 +88,9 @@ export const Home = () => {
 
   const handleClickForDetailsRoom = (item: any) => {
     if (token) {
-      navigate(`/roomImage/${item.path}`);
+      navigate(`/Room/${item.path}`);
+      console.log(item.path);
+      
     } else {
       window.confirm("You need to log in first");
       setOpenLogin(true);
@@ -154,11 +152,11 @@ export const Home = () => {
           <p style={{ margin: "25px 0 41px 0", fontSize: 24, fontWeight: 400 }}>
             Good people. Good thinking. Good feeling.
           </p>
-          {!token && <AuthBtn text="EXPLORE" isOpen={true} />}
+          {!token && <AuthBtn text="EXPLORE" isOpen={openLogin} />}
         </div>
       </div>
       <div className={styles.body}>
-        <h3>Facilities</h3>
+        <h3>Service</h3>
         <div className={styles.iconcontainer}>{renderIcon()}</div>
         <h3>Rooms & Rates</h3>
         <div className={styles.gridcontainer}>{renderGridItem()}</div>

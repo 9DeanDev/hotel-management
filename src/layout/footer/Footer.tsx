@@ -21,7 +21,7 @@ export const Footer = () => {
       url: "",
     },
     {
-      text: "Facilities",
+      text: "Service",
       url: "",
     },
     {

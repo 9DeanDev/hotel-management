@@ -145,12 +145,6 @@ export const AuthBtn = (props: IAuthButtonProps) => {
               }
             }}
           />
-          {/* <input
-            type="checkbox"
-            name="Remember me"
-            value="Remember me"
-            style={{ color: "#ffffff" }}
-          /> */}
           <PrimaryButton
             type="submit"
             disabled={loading}
