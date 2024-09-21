@@ -120,7 +120,7 @@ export const RoomDetails = () => {
           <div className={styles.title}>
             <h2>{detailsData.roomname} Room</h2>
             <p>
-              <span>{detailsData.price}VNĐ</span>/per night
+              <span>{detailsData.price} VNĐ</span>/per night
             </p>
           </div>
           <p>{detailsData.description}</p>

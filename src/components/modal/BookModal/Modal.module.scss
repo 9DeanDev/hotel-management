@@ -1,0 +1,21 @@
+.modalContainer {
+  width: 400px;
+  padding: 20px;
+  overflow-y: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalContent {
+  margin-top: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 1000px;
+}

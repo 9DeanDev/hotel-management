@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "../../components";
 import {
   CheckboxVisibility,
@@ -7,8 +8,35 @@ import {
   IColumn,
   IDropdownOption,
 } from "@fluentui/react";
+import { BookModal } from "../modal/BookModal/Modal";
 
 export const RoomChecker = (props: any) => {
+  const [selectedValues, setSelectedValues] = useState<Record<number, number>>(
+    {}
+  );
+  const [selectedRoom, setSelectedRoom] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleBookClick = (room: any) => {
+    let checkAuth = localStorage.getItem("email");
+    if (!checkAuth) {
+      window.confirm("You need to login first.");
+    } else {
+      setSelectedRoom(room); // Lưu thông tin phòng được chọn
+      setIsModalOpen(true); // Mở Modal
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRoom(null);
+  };
+
+  const handleConfirmBooking = () => {
+    console.log("Booking confirmed for", selectedRoom);
+    setIsModalOpen(false);
+  };
+
   const columns: IColumn[] = [
     {
       key: "column1",
@@ -91,12 +119,14 @@ export const RoomChecker = (props: any) => {
             style={{ display: "flex", alignItems: "center", height: "100%" }}
           >
             <Dropdown
-              selectedKey={0}
+              selectedKey={selectedValues[item.id] || 0}
+              defaultChecked={true}
               options={quantityOptions}
-              onChange={(_event, option) => {
-                console.log(
-                  `Selected quantity for room ${item.id}: ${option?.key}`
-                );
+              onChange={(_event, option: any) => {
+                setSelectedValues((prev) => ({
+                  ...prev,
+                  [item.id]: option.key || 1,
+                }));
               }}
             />
           </div>
@@ -113,10 +143,8 @@ export const RoomChecker = (props: any) => {
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           <Button
             text="Book"
-            onClick={() => {
-              console.log(`Booking room ${item.id}`);
-              // Xử lý đặt phòng tại đây (có thể gọi API hoặc cập nhật state)
-            }}
+            onClick={() => handleBookClick(item)}
+            disabled={!selectedValues[item.id]}
           />
         </div>
       ),
@@ -124,12 +152,23 @@ export const RoomChecker = (props: any) => {
   ];
 
   return (
-    <DetailsList
-      items={props.rooms}
-      columns={columns}
-      setKey="set"
-      layoutMode={DetailsListLayoutMode.fixedColumns}
-      checkboxVisibility={CheckboxVisibility.hidden}
-    />
+    <>
+      <DetailsList
+        items={props.rooms}
+        columns={columns}
+        setKey="set"
+        layoutMode={DetailsListLayoutMode.fixedColumns}
+        checkboxVisibility={CheckboxVisibility.hidden}
+      />
+      {isModalOpen && (
+        <BookModal
+          isOpen={isModalOpen}
+          selectedRoom={selectedRoom}
+          selectedValues={selectedValues}
+          handleCloseModal={handleCloseModal}
+          handleConfirmBooking={handleConfirmBooking}
+        />
+      )}
+    </>
   );
 };

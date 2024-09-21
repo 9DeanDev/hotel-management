@@ -1,5 +1,5 @@
 import { ActionButton, IButtonStyles, PrimaryButton } from "@fluentui/react";
-import { CustomModal } from "../modal/Modal";
+import { AuthModal } from "../modal/AuthModal/Modal";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input } from "..";
@@ -28,6 +28,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
         });
         if (res) {
           localStorage.setItem("username", res.data.result.username);
+          localStorage.setItem("email", res.data.result.email);
           localStorage.setItem("token", res.data.result.token);
           localStorage.setItem("role", res.data.result.role);
           isOpenLogin(false);
@@ -91,7 +92,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
 
   const ModalLogin = () => {
     return (
-      <CustomModal
+      <AuthModal
         isOpen={openLogin}
         title="LOGIN"
         subtitle="Welcome back! Please enter your login details"
@@ -165,7 +166,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
             Create your new account.
           </ActionButton>
         </form>
-      </CustomModal>
+      </AuthModal>
     );
   };
 
@@ -181,7 +182,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
 
   const ModalRegister = () => {
     return (
-      <CustomModal
+      <AuthModal
         isOpen={openRegister}
         title="REGISTER"
         onDismiss={() => isOpenRegister(false)}
@@ -293,7 +294,7 @@ export const AuthBtn = (props: IAuthButtonProps) => {
             }}
           />
         </form>
-      </CustomModal>
+      </AuthModal>
     );
   };
 

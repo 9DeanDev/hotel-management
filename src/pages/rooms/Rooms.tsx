@@ -16,6 +16,7 @@ export const Rooms = () => {
   const { control, handleSubmit, setValue } = useForm();
   const [availableRooms, setAvailableRooms] = useState(null);
 
+
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -84,6 +85,7 @@ export const Rooms = () => {
     }
   };
 
+  
   return (
     <LayoutComponent>
       {data.map((item: any, index) => {
@@ -120,7 +122,7 @@ export const Rooms = () => {
                 <div className={styles.title}>
                   <h2>{item.roomname} Room</h2>
                   <p>
-                    <span>{item.price}VNĐ</span>/per night
+                    <span>{item.price} VNĐ</span>/per night
                   </p>
                 </div>
                 <p>{item.description}</p>

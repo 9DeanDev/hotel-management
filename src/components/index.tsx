@@ -1,5 +1,5 @@
 import { Input } from "./input/Input";
-import { CustomModal } from "./modal/Modal";
+import { AuthModal } from "./modal/AuthModal/Modal";
 import { ProtectedRoute } from "./protected-route/ProtectedRoute";
 import { Button } from "./button/Button";
 import { CustomDatePicker } from "./date-picker/CustomDatePicker";
@@ -8,7 +8,7 @@ import { AuthBtn } from "./auth-btn/AuthBtn";
 
 export {
     Input,
-    CustomModal,
+    AuthModal,
     ProtectedRoute,
     AuthBtn,
     Button,

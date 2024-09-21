@@ -15,7 +15,7 @@ import {
     Button,
     CustomDatePicker,
     CustomDropdown,
-    CustomModal,
+    AuthModal,
 } from "../../components";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,6 +24,7 @@ import { useNavigate } from "react-router";
 export const Header = () => {
     const navigate = useNavigate();
     const [user, _setUser] = useState(localStorage.getItem("username"));
+   
     const { control, handleSubmit } = useForm();
     const [openCheckForm, isOpenCheckForm] = useState(false);
 
@@ -113,7 +114,7 @@ export const Header = () => {
 
     const checkForm = () => {
         return (
-            <CustomModal
+            <AuthModal
                 isOpen={openCheckForm}
                 onDismiss={() => isOpenCheckForm(false)}
             >
@@ -144,18 +145,23 @@ export const Header = () => {
                     />
                     <Button type="submit" text="Check Availability" />
                 </form>
-            </CustomModal>
+            </AuthModal>
         );
     };
 
     const handleLogout = () => {
         if (window.confirm("Are you are to logout?")) {
             localStorage.removeItem("username")
+            localStorage.removeItem("email")
             localStorage.removeItem("role")
             localStorage.removeItem("token")
             _setUser(localStorage.getItem("username"))
             navigate(0)
         }
+    }
+
+    const handleClickDashboard = () => {
+        navigate('/Dashboard')
     }
 
     return (
@@ -169,7 +175,19 @@ export const Header = () => {
                 <CommandBar
                     items={
                         user
-                            ? [
+                            ?  localStorage.getItem("role")==='admin'? [
+                                ...itemBar,
+                                {
+                                    key: "Dashboard",
+                                    text: "Dashboard",
+                                    onClick: handleClickDashboard,
+                                },
+                                {
+                                    key: "Logout",
+                                    text: "Logout",
+                                    onClick: handleLogout,
+                                },
+                            ] :[
                                 ...itemBar,
                                 {
                                     key: "Logout",

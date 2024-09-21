@@ -67,7 +67,7 @@ export const Home = () => {
     {
       url: "./../../src/assets/anh-ks-thumb.jpeg",
       text: "Standard Twin Room",
-      path: "StandardTwin",
+      path: "Standard-Twin",
     },
     {
       url: "./../../src/assets/StandardRoom.jpg",
