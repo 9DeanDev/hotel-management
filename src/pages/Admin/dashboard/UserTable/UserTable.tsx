@@ -5,7 +5,7 @@ import {
   DetailsListLayoutMode,
   PrimaryButton,
   TextField,
-  Modal,
+  Panel,
   IconButton,
   Spinner,
   Stack,
@@ -53,9 +53,10 @@ const UserTable: React.FC = () => {
     address: null,
     password: "",
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddUserFormVisible, setIsAddUserFormVisible] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [operationLoading, setOperationLoading] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -132,8 +133,8 @@ const UserTable: React.FC = () => {
           setUsers(
             users.map((user) => (user.id === editingUser.id ? res.data : user))
           );
-          setIsModalOpen(false);
           setEditingUser(null); // Reset form after saving
+          setIsPanelOpen(false); // Close the panel
           alert("User updated successfully");
         }
       } catch (error) {
@@ -189,7 +190,7 @@ const UserTable: React.FC = () => {
             text="Edit"
             onClick={() => {
               setEditingUser(item);
-              setIsModalOpen(true);
+              setIsPanelOpen(true); // Open the panel when editing
             }}
           />
           <PrimaryButton
@@ -203,54 +204,63 @@ const UserTable: React.FC = () => {
 
   return (
     <div>
-      <Stack horizontalAlign="center">
+      <Stack>
         <Stack tokens={{ childrenGap: 8 }} style={{ width: "50%" }}>
-          <h2>Add User</h2>
-          <TextField
-            label="Username"
-            value={newUser.username}
-            onChange={(_, newValue) =>
-              setNewUser({ ...newUser, username: newValue || "" })
-            }
+          <h2>User List</h2>
+          <IconButton
+            iconProps={{ iconName: "Add" }} // Biểu tượng thêm người
+            title="Add User"
+            onClick={() => setIsAddUserFormVisible((prev) => !prev)} // Toggle form visibility
           />
-          <TextField
-            label="Email"
-            value={newUser.email}
-            onChange={(_, newValue) =>
-              setNewUser({ ...newUser, email: newValue || "" })
-            }
-          />
-          <TextField
-            label="Phone"
-            value={newUser.phone}
-            onChange={(_, newValue) =>
-              setNewUser({ ...newUser, phone: newValue || "" })
-            }
-          />
-          <TextField
-            label="Role"
-            value={newUser.role}
-            onChange={(_, newValue) =>
-              setNewUser({ ...newUser, role: newValue || "" })
-            }
-          />
-          <TextField
-            label="Password"
-            type="password"
-            value={newUser.password}
-            onChange={(_, newValue) =>
-              setNewUser({ ...newUser, password: newValue || "" })
-            }
-          />
-          <PrimaryButton
-            text="Add User"
-            onClick={handleAddUser}
-            disabled={operationLoading}
-          />
+          {isAddUserFormVisible && (
+            <>
+              <h2>Add User</h2>
+              <TextField
+                label="Username"
+                value={newUser.username}
+                onChange={(_, newValue) =>
+                  setNewUser({ ...newUser, username: newValue || "" })
+                }
+              />
+              <TextField
+                label="Email"
+                value={newUser.email}
+                onChange={(_, newValue) =>
+                  setNewUser({ ...newUser, email: newValue || "" })
+                }
+              />
+              <TextField
+                label="Phone"
+                value={newUser.phone}
+                onChange={(_, newValue) =>
+                  setNewUser({ ...newUser, phone: newValue || "" })
+                }
+              />
+              <TextField
+                label="Role"
+                value={newUser.role}
+                onChange={(_, newValue) =>
+                  setNewUser({ ...newUser, role: newValue || "" })
+                }
+              />
+              <TextField
+                label="Password"
+                type="password"
+                value={newUser.password}
+                onChange={(_, newValue) =>
+                  setNewUser({ ...newUser, password: newValue || "" })
+                }
+              />
+              <PrimaryButton
+                text="Add User"
+                onClick={handleAddUser}
+                disabled={operationLoading}
+              />
+            </>
+          )}
         </Stack>
       </Stack>
 
-      <h2>User List</h2>
       {loading ? (
         <Spinner />
       ) : (
@@ -264,17 +274,17 @@ const UserTable: React.FC = () => {
         />
       )}
 
-      {/* Modal for editing user */}
-      <Modal
-        isOpen={isModalOpen}
+      {/* Panel for editing user */}
+      <Panel
+        isOpen={isPanelOpen}
         onDismiss={() => {
-          setIsModalOpen(false);
           setEditingUser(null); // Reset editing user on close
+          setIsPanelOpen(false); // Close the panel
         }}
-        isBlocking={false}
+        headerText="Edit User"
+        closeButtonAriaLabel="Close"
       >
         <div style={{ padding: "20px" }}>
-          <h2>Edit User</h2>
           {editingUser && (
             <>
               <TextField
@@ -310,17 +320,13 @@ const UserTable: React.FC = () => {
                 onClick={handleEditUser}
                 disabled={operationLoading}
               />
-              <IconButton
-                iconProps={{ iconName: "Cancel" }}
-                ariaLabel="Close popup modal"
-                onClick={() => setIsModalOpen(false)}
-              />
             </>
           )}
         </div>
-      </Modal>
+      </Panel>
     </div>
   );
 };
 
 export default UserTable;
+

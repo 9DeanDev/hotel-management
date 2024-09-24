@@ -51,6 +51,8 @@ export const AuthBtn = (props: IAuthButtonProps) => {
         });
         if (res) {
           localStorage.setItem("username", res.data.result.username);
+          localStorage.setItem("email", res.data.result.email);
+          localStorage.setItem("token", res.data.result.token);
           localStorage.setItem("role", res.data.result.role);
           alert("Đăng ký thành công!");
           isOpenRegister(false);

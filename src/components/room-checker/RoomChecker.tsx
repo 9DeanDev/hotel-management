@@ -33,7 +33,9 @@ export const RoomChecker = (props: any) => {
   };
 
   const handleConfirmBooking = () => {
-    console.log("Booking confirmed for", selectedRoom);
+    window.confirm(
+    'booking success'
+    )
     setIsModalOpen(false);
   };
 

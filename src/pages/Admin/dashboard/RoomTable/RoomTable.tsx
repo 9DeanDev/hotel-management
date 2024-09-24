@@ -5,11 +5,12 @@ import {
   DetailsListLayoutMode,
   PrimaryButton,
   TextField,
-  Modal,
-  IconButton,
   Spinner,
   Stack,
   CheckboxVisibility,
+  IconButton,
+  Panel,
+  PanelType,
 } from "@fluentui/react";
 import axios from "axios";
 
@@ -32,9 +33,10 @@ const RoomTable: React.FC = () => {
     facilities: "",
     totalrooms: 0,
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
   const [operationLoading, setOperationLoading] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false); // State to handle panel open/close
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
@@ -55,7 +57,10 @@ const RoomTable: React.FC = () => {
   const handleAddRoom = useCallback(async () => {
     setOperationLoading(true);
     try {
-      const res = await axios.post<Room>("http://localhost:8080/rooms", newRoom);
+      const res = await axios.post<Room>(
+        "http://localhost:8080/rooms",
+        newRoom
+      );
       if (res) {
         fetchRooms();
         setNewRoom({
@@ -76,14 +81,16 @@ const RoomTable: React.FC = () => {
 
   const handleDeleteRoom = useCallback(
     async (roomname: string) => {
-      const confirmation = window.confirm(`Are you sure to delete the room: ${roomname}?`);
+      const confirmation = window.confirm(
+        `Are you sure to delete the room: ${roomname}?`
+      );
       if (confirmation) {
         setOperationLoading(true);
         try {
-          // API request using roomname instead of id
-          let res = await axios.delete(`http://localhost:8080/rooms/${roomname}`);
+          let res = await axios.delete(
+            `http://localhost:8080/rooms/${roomname}`
+          );
           if (res) {
-            // Filter out the deleted room from the rooms state
             setRooms(rooms.filter((room) => room.roomname !== roomname));
             alert("Room deleted successfully");
           }
@@ -96,7 +103,6 @@ const RoomTable: React.FC = () => {
     },
     [rooms]
   );
-  
 
   const handleEditRoom = useCallback(async () => {
     if (editingRoom) {
@@ -110,8 +116,8 @@ const RoomTable: React.FC = () => {
           setRooms(
             rooms.map((room) => (room.id === editingRoom.id ? res.data : room))
           );
-          setIsModalOpen(false);
           setEditingRoom(null); // Reset form after saving
+          setIsPanelOpen(false); // Close panel after saving
           alert("Room updated successfully");
         }
       } catch (error) {
@@ -152,7 +158,7 @@ const RoomTable: React.FC = () => {
       fieldName: "facilities",
       minWidth: 150,
       maxWidth: 200,
-      isMultiline: true
+      isMultiline: true,
     },
     {
       key: "column5",
@@ -162,80 +168,91 @@ const RoomTable: React.FC = () => {
       maxWidth: 150,
     },
     {
-        key: "column6",
-        name: "Actions",
-        fieldName: "actions",
-        minWidth: 100,
-        maxWidth: 200,
-        onRender: (item: Room) => (
-          <Stack horizontal tokens={{ childrenGap: 5 }}>
-            <PrimaryButton
-              text="Edit"
-              onClick={() => {
-                setEditingRoom(item);
-                setIsModalOpen(true);
-              }}
-            />
-            <PrimaryButton
-              text="Delete"
-              onClick={() => handleDeleteRoom(item.roomname)}
-            />
-          </Stack>
-        ),
-      },
+      key: "column6",
+      name: "Actions",
+      fieldName: "actions",
+      minWidth: 100,
+      maxWidth: 200,
+      onRender: (item: Room) => (
+        <Stack horizontal tokens={{ childrenGap: 5 }}>
+          <PrimaryButton
+            text="Edit"
+            onClick={() => {
+              setEditingRoom(item);
+              setIsPanelOpen(true); // Open panel when editing
+            }}
+          />
+          <PrimaryButton
+            text="Delete"
+            onClick={() => handleDeleteRoom(item.roomname)}
+          />
+        </Stack>
+      ),
+    },
   ];
 
   return (
     <div>
-      <Stack horizontalAlign="center">
+      <Stack>
         <Stack tokens={{ childrenGap: 8 }} style={{ width: "50%" }}>
-          <h2>Add Room</h2>
-          <TextField
-            label="Room Name"
-            value={newRoom.roomname}
-            onChange={(_, newValue) =>
-              setNewRoom({ ...newRoom, roomname: newValue || "" })
-            }
+          <h2>Room List</h2>
+          <IconButton
+            iconProps={{ iconName: showForm ? "Cancel" : "Add" }}
+            ariaLabel="Toggle Add Room"
+            onClick={() => setShowForm(!showForm)}
           />
-          <TextField
-            label="Description"
-            value={newRoom.description}
-            onChange={(_, newValue) =>
-              setNewRoom({ ...newRoom, description: newValue || "" })
-            }
-          />
-          <TextField
-            label="Price"
-            type="number"
-            value={newRoom.price.toString()}
-            onChange={(_, newValue) =>
-              setNewRoom({ ...newRoom, price: parseFloat(newValue || "0") })
-            }
-          />
-          <TextField
-            label="Facilities"
-            value={newRoom.facilities}
-            onChange={(_, newValue) =>
-              setNewRoom({ ...newRoom, facilities: newValue || "" })
-            }
-          />
-          <TextField
-            label="Total Rooms"
-            type="number"
-            value={newRoom.totalrooms.toString()}
-            onChange={(_, newValue) =>
-              setNewRoom({ ...newRoom, totalrooms: parseInt(newValue || "0") })
-            }
-          />
-          <PrimaryButton
-            text="Add Room"
-            onClick={handleAddRoom}
-            disabled={operationLoading}
-          />
+          {showForm && (
+            <div>
+              <TextField
+                label="Room Name"
+                value={newRoom.roomname}
+                onChange={(_, newValue) =>
+                  setNewRoom({ ...newRoom, roomname: newValue || "" })
+                }
+              />
+              <TextField
+                label="Description"
+                value={newRoom.description}
+                onChange={(_, newValue) =>
+                  setNewRoom({ ...newRoom, description: newValue || "" })
+                }
+              />
+              <TextField
+                label="Price"
+                type="number"
+                value={newRoom.price.toString()}
+                onChange={(_, newValue) =>
+                  setNewRoom({ ...newRoom, price: parseFloat(newValue || "0") })
+                }
+              />
+              <TextField
+                label="Facilities"
+                value={newRoom.facilities}
+                onChange={(_, newValue) =>
+                  setNewRoom({ ...newRoom, facilities: newValue || "" })
+                }
+              />
+              <TextField
+                label="Total Rooms"
+                type="number"
+                value={newRoom.totalrooms.toString()}
+                onChange={(_, newValue) =>
+                  setNewRoom({
+                    ...newRoom,
+                    totalrooms: parseInt(newValue || "0"),
+                  })
+                }
+              />
+              <PrimaryButton
+                text="Add Room"
+                onClick={handleAddRoom}
+                disabled={operationLoading}
+              />
+            </div>
+          )}
         </Stack>
       </Stack>
 
-      <h2>Room List</h2>
       {loading ? (
         <Spinner />
       ) : (
@@ -249,84 +266,75 @@ const RoomTable: React.FC = () => {
         />
       )}
 
-      {/* Modal for editing room */}
-      <Modal
-        isOpen={isModalOpen}
-        onDismiss={() => {
-          setIsModalOpen(false);
-          setEditingRoom(null); // Reset editing room on close
-        }}
-        isBlocking={false}
+      {/* Panel for editing room */}
+      <Panel
+        isOpen={isPanelOpen}
+        onDismiss={() => setIsPanelOpen(false)}
+        type={PanelType.smallFixedFar}
+        headerText="Edit Room"
       >
-        <div style={{ padding: "20px" }}>
-          <h2>Edit Room</h2>
-          {editingRoom && (
-            <>
-              <TextField
-                label="Room Name"
-                value={editingRoom.roomname}
-                onChange={(_, newValue) =>
-                  setEditingRoom({ ...editingRoom, roomname: newValue || "" })
-                }
-              />
-              <TextField
-                label="Description"
-                value={editingRoom.description}
-                onChange={(_, newValue) =>
-                  setEditingRoom({
-                    ...editingRoom,
-                    description: newValue || "",
-                  })
-                }
-              />
-              <TextField
-                label="Price"
-                type="number"
-                value={editingRoom.price.toString()}
-                onChange={(_, newValue) =>
-                  setEditingRoom({
-                    ...editingRoom,
-                    price: parseFloat(newValue || "0"),
-                  })
-                }
-              />
-              <TextField
-                label="Facilities"
-                value={editingRoom.facilities}
-                onChange={(_, newValue) =>
-                  setEditingRoom({
-                    ...editingRoom,
-                    facilities: newValue || "",
-                  })
-                }
-              />
-              <TextField
-                label="Total Rooms"
-                type="number"
-                value={editingRoom.totalrooms.toString()}
-                onChange={(_, newValue) =>
-                  setEditingRoom({
-                    ...editingRoom,
-                    totalrooms: parseInt(newValue || "0"),
-                  })
-                }
-              />
-              <PrimaryButton
-                text="Save"
-                onClick={handleEditRoom}
-                disabled={operationLoading}
-              />
-              <IconButton
-                iconProps={{ iconName: "Cancel" }}
-                ariaLabel="Close popup modal"
-                onClick={() => setIsModalOpen(false)}
-              />
-            </>
-          )}
-        </div>
-      </Modal>
+        {editingRoom && (
+          <>
+            <TextField
+              label="Room Name"
+              value={editingRoom.roomname}
+              onChange={(_, newValue) =>
+                setEditingRoom({ ...editingRoom, roomname: newValue || "" })
+              }
+            />
+            <TextField
+              label="Description"
+              value={editingRoom.description}
+              onChange={(_, newValue) =>
+                setEditingRoom({
+                  ...editingRoom,
+                  description: newValue || "",
+                })
+              }
+            />
+            <TextField
+              label="Price"
+              type="number"
+              value={editingRoom.price.toString()}
+              onChange={(_, newValue) =>
+                setEditingRoom({
+                  ...editingRoom,
+                  price: parseFloat(newValue || "0"),
+                })
+              }
+            />
+            <TextField
+              label="Facilities"
+              value={editingRoom.facilities}
+              onChange={(_, newValue) =>
+                setEditingRoom({
+                  ...editingRoom,
+                  facilities: newValue || "",
+                })
+              }
+            />
+            <TextField
+              label="Total Rooms"
+              type="number"
+              value={editingRoom.totalrooms.toString()}
+              onChange={(_, newValue) =>
+                setEditingRoom({
+                  ...editingRoom,
+                  totalrooms: parseInt(newValue || "0"),
+                })
+              }
+            />
+            <PrimaryButton
+              text="Save"
+              onClick={handleEditRoom}
+              disabled={operationLoading}
+            />
+          </>
+        )}
+      </Panel>
     </div>
   );
 };
 
 export default RoomTable;
+

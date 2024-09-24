@@ -5,11 +5,15 @@ import {
   DetailsListLayoutMode,
   PrimaryButton,
   TextField,
-  Modal,
   IconButton,
   Spinner,
   Stack,
   CheckboxVisibility,
+  Panel,
+  PanelType,
+  Dropdown,
+  IDropdownOption,
+  DatePicker,
 } from "@fluentui/react";
 import axios from "axios";
 
@@ -43,14 +47,33 @@ interface Booking {
 const BookingTable: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newBooking, setNewBooking] = useState<Omit<Booking, "id" | "room" | "user">>({
+  const [newBooking, setNewBooking] = useState<Omit<Booking, "id">>({
     check_in_date: "",
     check_out_date: "",
     status: "",
+    room: {} as Room,
+    user: {} as User,
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [operationLoading, setOperationLoading] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  // Fetch rooms and users data
+  const fetchRoomsAndUsers = useCallback(async () => {
+    try {
+      const [roomsResponse, usersResponse] = await Promise.all([
+        axios.get<Room[]>("http://localhost:8080/rooms"),
+        axios.get<User[]>("http://localhost:8080/users"),
+      ]);
+      setRooms(roomsResponse.data);
+      setUsers(usersResponse.data);
+    } catch (error) {
+      console.error("Error fetching rooms or users:", error);
+    }
+  }, []);
 
   // Fetch bookings data
   const fetchBookings = useCallback(async () => {
@@ -66,21 +89,30 @@ const BookingTable: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    fetchRoomsAndUsers();
     fetchBookings();
-  }, [fetchBookings]);
+  }, [fetchRoomsAndUsers, fetchBookings]);
 
   // Add booking
   const handleAddBooking = useCallback(async () => {
     setOperationLoading(true);
     try {
-      const res = await axios.post<Booking>("http://localhost:8080/bookings", newBooking);
+      const res = await axios.post("http://localhost:8080/bookings", {
+        check_in_date: newBooking.check_in_date,
+        check_out_date: newBooking.check_out_date,
+        room_id: newBooking.room.id, // room_id từ room
+        user_id: newBooking.user.id, // user_id từ user
+        status: newBooking.status,
+      });
       if (res) {
         fetchBookings();
         setNewBooking({
           check_in_date: "",
           check_out_date: "",
           status: "",
-        }); // Reset form
+          room: {} as Room,
+          user: {} as User,
+        });
         alert("Added a new booking");
       }
     } catch (error) {
@@ -119,7 +151,13 @@ const BookingTable: React.FC = () => {
       try {
         const res = await axios.put<Booking>(
           `http://localhost:8080/bookings/${editingBooking.id}`,
-          editingBooking
+          {
+            check_in_date: editingBooking.check_in_date,
+            check_out_date: editingBooking.check_out_date,
+            room_id: editingBooking.room.id,
+            user_id: editingBooking.user.id,
+            status: editingBooking.status,
+          }
         );
         if (res) {
           setBookings(
@@ -127,7 +165,6 @@ const BookingTable: React.FC = () => {
               booking.id === editingBooking.id ? res.data : booking
             )
           );
-          setIsModalOpen(false);
           setEditingBooking(null); // Reset form after saving
           alert("Booking updated successfully");
         }
@@ -138,6 +175,17 @@ const BookingTable: React.FC = () => {
       }
     }
   }, [editingBooking, bookings]);
+
+  // Convert room and user data to dropdown options
+  const roomOptions: IDropdownOption[] = rooms.map((room) => ({
+    key: room.id,
+    text: room.roomname,
+  }));
+
+  const userOptions: IDropdownOption[] = users.map((user) => ({
+    key: user.id,
+    text: user.username,
+  }));
 
   const columns: IColumn[] = [
     {
@@ -189,7 +237,7 @@ const BookingTable: React.FC = () => {
             text="Edit"
             onClick={() => {
               setEditingBooking(item);
-              setIsModalOpen(true);
+              setIsPanelOpen(true); // Open the panel
             }}
           />
           <PrimaryButton
@@ -203,111 +251,172 @@ const BookingTable: React.FC = () => {
 
   return (
     <div>
-      <Stack horizontalAlign="center">
+      <Stack>
         <Stack tokens={{ childrenGap: 8 }} style={{ width: "50%" }}>
-          <h2>Add Booking</h2>
-          <TextField
-            label="Check-in Date"
-            value={newBooking.check_in_date}
-            onChange={(_, newValue) =>
-              setNewBooking({ ...newBooking, check_in_date: newValue || "" })
-            }
+          <h2>Booking List</h2>
+          <IconButton
+            iconProps={{ iconName: showForm ? "Cancel" : "Add" }}
+            ariaLabel="Toggle Add Booking"
+            onClick={() => setShowForm(!showForm)}
           />
-          <TextField
-            label="Check-out Date"
-            value={newBooking.check_out_date}
-            onChange={(_, newValue) =>
-              setNewBooking({ ...newBooking, check_out_date: newValue || "" })
-            }
-          />
-          <TextField
-            label="Status"
-            value={newBooking.status}
-            onChange={(_, newValue) =>
-              setNewBooking({ ...newBooking, status: newValue || "" })
-            }
-          />
-          <PrimaryButton
-            text="Add Booking"
-            onClick={handleAddBooking}
-            disabled={operationLoading}
-          />
-        </Stack>
-      </Stack>
-
-      <h2>Booking List</h2>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <DetailsList
-          items={bookings}
-          columns={columns}
-          setKey="set"
-          layoutMode={DetailsListLayoutMode.fixedColumns}
-          isHeaderVisible={true}
-          checkboxVisibility={CheckboxVisibility.hidden}
-        />
-      )}
-
-      {/* Modal for editing booking */}
-      <Modal
-        isOpen={isModalOpen}
-        onDismiss={() => {
-          setIsModalOpen(false);
-          setEditingBooking(null); // Reset editing booking on close
-        }}
-        isBlocking={false}
-      >
-        <div style={{ padding: "20px" }}>
-          <h2>Edit Booking</h2>
-          {editingBooking && (
-            <>
-              <TextField
-                label="Check-in Date"
-                value={editingBooking.check_in_date}
-                onChange={(_, newValue) =>
-                  setEditingBooking({
-                    ...editingBooking,
-                    check_in_date: newValue || "",
+          {showForm && (
+            <div>
+              <Dropdown
+                label="Room"
+                options={roomOptions}
+                selectedKey={newBooking.room?.id}
+                onChange={(_, option) =>
+                  setNewBooking({
+                    ...newBooking,
+                    room: rooms.find((room) => room.id === option?.key) || ({} as Room),
                   })
                 }
               />
-              <TextField
-                label="Check-out Date"
-                value={editingBooking.check_out_date}
-                onChange={(_, newValue) =>
-                  setEditingBooking({
-                    ...editingBooking,
-                    check_out_date: newValue || "",
+              <Dropdown
+                label="User"
+                options={userOptions}
+                selectedKey={newBooking.user?.id}
+                onChange={(_, option) =>
+                  setNewBooking({
+                    ...newBooking,
+                    user: users.find((user) => user.id === option?.key) || ({} as User),
                   })
                 }
               />
+             <DatePicker
+  label="Check-in Date"
+  value={newBooking.check_in_date ? new Date(newBooking.check_in_date) : undefined} // Hiển thị giá trị nếu đã có ngày
+  onSelectDate={(date) => {
+    if (date) {
+      setNewBooking({
+        ...newBooking,
+        check_in_date: date.toISOString().split("T")[0], // Chuyển đổi thành chuỗi 'YYYY-MM-DD'
+      });
+    }
+  }}
+/>
+
+<DatePicker
+  label="Check-out Date"
+  value={newBooking.check_out_date ? new Date(newBooking.check_out_date) : undefined}
+  onSelectDate={(date) => {
+    if (date) {
+      setNewBooking({
+        ...newBooking,
+        check_out_date: date.toISOString().split("T")[0],
+      });
+    }
+  }}
+/>
+
               <TextField
                 label="Status"
-                value={editingBooking.status}
+                value={newBooking.status}
                 onChange={(_, newValue) =>
-                  setEditingBooking({
-                    ...editingBooking,
-                    status: newValue || "",
-                  })
+                  setNewBooking({ ...newBooking, status: newValue || "" })
                 }
               />
               <PrimaryButton
-                text="Save"
-                onClick={handleEditBooking}
+                text="Add Booking"
+                onClick={handleAddBooking}
                 disabled={operationLoading}
               />
-              <IconButton
-                iconProps={{ iconName: "Cancel" }}
-                ariaLabel="Close popup modal"
-                onClick={() => setIsModalOpen(false)}
-              />
-            </>
+            </div>
           )}
-        </div>
-      </Modal>
+        </Stack>
+
+        {loading ? (
+          <Spinner label="Loading..." />
+        ) : (
+          <DetailsList
+            items={bookings}
+            columns={columns}
+            setKey="set"
+            layoutMode={DetailsListLayoutMode.justified}
+            checkboxVisibility={CheckboxVisibility.hidden}
+          />
+        )}
+      </Stack>
+
+      <Panel
+        isOpen={isPanelOpen}
+        onDismiss={() => setIsPanelOpen(false)}
+        type={PanelType.medium}
+        headerText="Edit Booking"
+        closeButtonAriaLabel="Close"
+      >
+        {editingBooking && (
+          <div>
+            <Dropdown
+              label="Room"
+              options={roomOptions}
+              selectedKey={editingBooking.room?.id}
+              onChange={(_, option) =>
+                setEditingBooking({
+                  ...editingBooking,
+                  room: rooms.find((room) => room.id === option?.key) || ({} as Room),
+                })
+              }
+            />
+            <Dropdown
+              label="User"
+              options={userOptions}
+              selectedKey={editingBooking.user?.id}
+              onChange={(_, option) =>
+                setEditingBooking({
+                  ...editingBooking,
+                  user: users.find((user) => user.id === option?.key) || ({} as User),
+                })
+              }
+            />
+            <DatePicker
+  label="Check-in Date"
+  value={newBooking.check_in_date ? new Date(newBooking.check_in_date) : new Date(editingBooking.check_in_date)} // Hiển thị giá trị nếu đã có ngày
+  onSelectDate={(date) => {
+    if (date) {
+      setNewBooking({
+        ...newBooking,
+        check_in_date: date.toISOString().split("T")[0], // Chuyển đổi thành chuỗi 'YYYY-MM-DD'
+      });
+    }
+  }}
+/>
+
+<DatePicker
+  label="Check-out Date"
+  value={newBooking.check_out_date ? new Date(newBooking.check_out_date) : new Date(editingBooking.check_out_date)}
+  onSelectDate={(date) => {
+    if (date) {
+      setNewBooking({
+        ...newBooking,
+        check_out_date: date.toISOString().split("T")[0],
+      });
+    }
+  }}
+/>
+            <TextField
+              label="Status"
+              value={editingBooking.status}
+              onChange={(_, newValue) =>
+                setEditingBooking({
+                  ...editingBooking,
+                  status: newValue || "",
+                })
+              }
+            />
+            <PrimaryButton
+              text="Save"
+              onClick={handleEditBooking}
+              disabled={operationLoading}
+            />
+          </div>
+        )}
+      </Panel>
     </div>
   );
 };
 
 export default BookingTable;
+
+
+
